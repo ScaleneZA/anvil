@@ -51,6 +51,7 @@ class BaseModel
         
         $query = mysql_query($query_text, $this->connection);
         if(!$query) return false;
+        $data_array = array();
         while ($row = mysql_fetch_assoc($query)){
             $data_array[] = $row;
         }

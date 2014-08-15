@@ -76,7 +76,7 @@ class ProjectModel extends BaseModel
             WHERE id = {$release_id}
         ");
         
-        return $time_stamp[0]['task_time_stamp'];
+        return empty($time_stamp[0]['task_time_stamp']) ? '0' : $time_stamp[0]['task_time_stamp'];
     }
     
     function getTeamsForProject($project_id)
@@ -230,7 +230,6 @@ class ProjectModel extends BaseModel
             SELECT id, priority
                 FROM task
             WHERE feature_id = {$feature_id}
-            {$order_by_sql}
             ");
 
         $task_array = array();
@@ -457,7 +456,7 @@ class ProjectModel extends BaseModel
             )
             ");
             
-        return $project[0]['id'];
+        return isset($project[0]['id']) ? $project[0]['id'] : 0;
     }
 
     /*
@@ -474,7 +473,7 @@ class ProjectModel extends BaseModel
             LIMIT 1 
             ");
             
-        return $releases[0]['id'];
+        return empty($releases[0]['id']) ? '0' : $releases[0]['id'];
     }
 
     /*
@@ -1170,7 +1169,7 @@ class ProjectModel extends BaseModel
         $releases = $this->executeQuery("
             SELECT `release`.id, `release`.title, `release`.start_date, `release`.estimated_completion_date, feature.title AS feature
             FROM `release` 
-            INNER JOIN feature ON feature.release_id = `release`.id
+            LEFT JOIN feature ON feature.release_id = `release`.id
             WHERE `release`.project_id = {$project_id}
             AND `release`.archived = 1
         ");

@@ -143,22 +143,18 @@ class ProjectController extends BaseController
         //All the '&nbsp's are for aligning the 'Edit' button. 
         $html .=  "<strong style='font-size:8pt'>{$title}</strong> &nbsp&nbsp
             ";
-        if($disabled){
+
+        if($_SESSION['is_admin'] || $_SESSION['user_email'] == $task_information['added_by']){
+            $html .= "<button style='position: absolute; top: 1; right: 41; font-size:5pt;' onclick=\"openTaskDialog({$task_id}, {$feature_id},'".mysql_escape_string(str_replace('"','`',$task_information['title']))."', '".mysql_escape_string(str_replace('"','`', $task_information['description']))."', '{$task_information['user_email']}', '{$task_information['md5']}', '{$task_information['estimated_hours']}');\" title='Click here to view or edit the task.'>?</button>";
+            $html .= "<button style='position: absolute; top: 1; right: 21; font-size:5pt;' onclick=\"openHoursDialog({$task_id});\" title='Click here to manage the hours done on this task.'>H</button>";
             $html .= "
-            <span style='color:white;' title='Task is disabled due to feature being impeded.'>Edit</span>
-            "; 
+            <span style='position: absolute; top: 1; right: 1; font-size:5pt'><button onclick='deleteTask({$task_id}, {$feature_id})'>X</button></span>
+            ";
         }else{
-            if($_SESSION['is_admin'] || $_SESSION['user_email'] == $task_information['added_by']){
-                $html .= "<button style='position: absolute; top: 1; right: 41; font-size:5pt;' onclick=\"openTaskDialog({$task_id}, {$feature_id},'".mysql_escape_string(str_replace('"','`',$task_information['title']))."', '".mysql_escape_string(str_replace('"','`', $task_information['description']))."', '{$task_information['user_email']}', '{$task_information['md5']}', '{$task_information['estimated_hours']}');\" title='Click here to view or edit the task.'>?</button>";
-                $html .= "<button style='position: absolute; top: 1; right: 21; font-size:5pt;' onclick=\"openHoursDialog({$task_id});\" title='Click here to manage the hours done on this task.'>H</button>";
-                $html .= "
-                <span style='position: absolute; top: 1; right: 1; font-size:5pt'><button onclick='deleteTask({$task_id}, {$feature_id})'>X</button></span>
-                "; 
-            }else{
-                $html .= "<button style='position: absolute; top: 1; right: 1; font-size:5pt;' onclick=\"openTaskDialog({$task_id}, {$feature_id},'".mysql_escape_string(str_replace('"','`',$task_information['title']))."', '".mysql_escape_string(str_replace('"','`', $task_information['description']))."', '{$task_information['user_email']}', '{$task_information['md5']}', '{$task_information['estimated_hours']}');\" title='Click here to view or edit the task.'>?</button>";
-                $html .= "<button style='position: absolute; top: 1; right: 21; font-size:5pt;' onclick=\"openHoursDialog({$task_id});\" title='Click here to manage the hours done on this task.'>H</button>";
-            }
+            $html .= "<button style='position: absolute; top: 1; right: 1; font-size:5pt;' onclick=\"openTaskDialog({$task_id}, {$feature_id},'".mysql_escape_string(str_replace('"','`',$task_information['title']))."', '".mysql_escape_string(str_replace('"','`', $task_information['description']))."', '{$task_information['user_email']}', '{$task_information['md5']}', '{$task_information['estimated_hours']}');\" title='Click here to view or edit the task.'>?</button>";
+            $html .= "<button style='position: absolute; top: 1; right: 21; font-size:5pt;' onclick=\"openHoursDialog({$task_id});\" title='Click here to manage the hours done on this task.'>H</button>";
         }
+
         
         $timestamp = $ProjectModel->getReleaseTaskTimeStamp($task_information['release_id']);
         
@@ -224,7 +220,7 @@ class ProjectController extends BaseController
                 }
             }
                 
-            if($success){
+            if(!empty($success)){
                 $_SESSION['show_message'] = 'Project saved successfully.';
                 header('location:'.$_SESSION['previous_url']);
                 exit;
@@ -234,7 +230,7 @@ class ProjectController extends BaseController
         }
 
         //If project_id, edit. Else Add.
-        if ($_GET['project_id']){
+        if (!empty($_GET['project_id'])){
             $project_id = $_GET['project_id'];
             $project_details = $this->ProjectModel->getProjectInformation($project_id);
         }else{
@@ -247,29 +243,40 @@ class ProjectController extends BaseController
         ?>
 
         <form method='POST'>
-        
         <table class='mainEditGrid' name='ProjectEdit' style='width:500px; margin-right:auto; margin-left:auto'> 
-        <tr></tr><th colspan=2 height=25px>Project details</th></tr>
-        <tr><td> &nbsp </td></tr>
-        <tr><td><table class='mainEditGrid' style='width:90%;'>
-        <tr>
-        <td>Project title</td>
-        <td><input type='text' style='width:300px' id='title' name='title' value='<?php echo $_POST['title']; ?>' onBlur='checkValid("title", this, "Project title")'/></td>
-        </tr> 
-        <tr>
-        <td>Project description</td>
-        <td><textarea rows=4 style='width:300px;' id='description'name='description' onBlur='checkValid("description", this, "Project description")'><?php echo $_POST['description']; ?></textarea></td>
-        </tr>
-        <tr><td>Start Date</td><td>
-        <input id='start_date' name='start_date' style='width:300px;' value='<?php echo $_POST['start_date']; ?>' type='date' />
-        </td></tr>
-        <tr><td colspan='2'><br/><center>
-        <input type='submit' style='width:80px' class='ui-widget-header ui-corner-all' name='save' id='save' value='Save' title='Click here to check and save the project.'>
-        </center><br/></td></tr>
+            <tr><th colspan=2 height=25px>Project details</th></tr>
+            <tr><td> &nbsp </td></tr>
+            <tr>
+                <td>
+                    <table class='mainEditGrid' style='width:90%;'>
+                        <tr>
+                            <td>Project title</td>
+                            <td><input type='text' style='width:300px' id='title' name='title' value='<?php echo isset($_POST['title']) ? $_POST['title'] : ''; ?>' onBlur='checkValid("title", this, "Project title")'/></td>
+                        </tr>
+                        <tr>
+                            <td>Project description</td>
+                            <td><textarea rows=4 style='width:300px;' id='description'name='description' onBlur='checkValid("description", this, "Project description")'><?php echo isset($_POST['description']) ? $_POST['description'] : ''; ?></textarea></td>
+                        </tr>
+                        <tr>
+                            <td>Start Date</td>
+                            <td>
+                                <input id='start_date' name='start_date' style='width:300px;' value='<?php echo isset($_POST['start_date']) ? $_POST['start_date'] : ''; ?>' type='date' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan='2'><br/>
+                                <center>
+                                    <input type='submit' style='width:80px' class='ui-widget-header ui-corner-all' name='save' id='save' value='Save' title='Click here to check and save the project.'>
+                                </center>
+                                <br/>
+                            </td>
+                        </tr>
 
-        </form>
-        </td></tr></table>
+                    </table>
+                </td>
+            </tr>
         </table>
+        </form>
         <script language='javascript'>
         var errors = new Array();
         
@@ -284,14 +291,14 @@ class ProjectController extends BaseController
         
        <?php
         
-        if(is_array($errors)){
+        if(!empty($errors) && is_array($errors)){
             foreach($errors AS $key=>$error_message){
                 echo "errors['{$key}'] = '{$error_message}';";
             }
         }
         
         //If edit mode, put the details on the page
-        if(is_array($project_details)){
+        if(!empty($project_details) && is_array($project_details)){
 
             //Go through each of the details retrieved from the database and set the elements to the values for edit
             foreach($project_details AS $detail=>$value){
@@ -310,7 +317,7 @@ class ProjectController extends BaseController
         $content = ob_get_contents();
         ob_clean();
 
-        if(is_array($project_details)){
+        if(!empty($project_details) && is_array($project_details)){
             $this->view->setTitle("Edit project: {$project_details['title']}");
         }else{
             $this->view->setTitle("Insert a new project");
@@ -347,7 +354,7 @@ class ProjectController extends BaseController
                 }
             }
                 
-            if($success){
+            if(!empty($success)){
                 $_SESSION['show_message'] = 'Feature saved successfully.';
                 header('location:'.$_SESSION['previous_url']);
                 exit;
@@ -372,31 +379,32 @@ class ProjectController extends BaseController
         <form method='POST'>
 
         <table class='mainEditGrid' name='Feature edit' style='width:500px; margin-right:auto; margin-left:auto'>
-        <tr></tr><th colspan=2 height=25px>Feature details</th></tr>
-        <tr><td> &nbsp </td></tr>
-        <tr><td><table class='mainEditGrid' style='width:90%;'>
-        <tr>
-        <td>Feature title</td>
-        <td><input type='text' style='width:300px' id='title' name='title' value='<?php echo $_POST['title']; ?>' onBlur='checkValid("title", this, "Feature title")' /></td>
-        </tr> 
-        <tr>
-        <td>Feature description</td>
-        <td><textarea rows=4 style='width:300px' id='description' name='description' onBlur='checkValid("description", this, "Feature description")'><?php echo $_POST['description']; ?></textarea></td>
-        </tr>
-        <tr>
-        <td>Feature status</td>
-        <td><select style='width:300px' id='status' name='status'>
-            <option value='Auto'>Auto Detect</option>
-            <option value='Impeded'>Impeded</option>
-        </select></td> 
-        </tr> 
-        <tr><td colspan='2'><br/><center>
-        <input type='submit' style='width:80px;' class='ui-state-default ui-corner-all' name='save' id='save' value='Save' title='Click here to check and save the feature.'>
-        </center><br/></td></tr>
+            <tr></tr><th colspan=2 height=25px>Feature details</th></tr>
+            <tr><td> &nbsp </td></tr>
+            <tr><td><table class='mainEditGrid' style='width:90%;'>
+            <tr>
+            <td>Feature title</td>
+            <td><input type='text' style='width:300px' id='title' name='title' value='<?php echo $_POST['title']; ?>' onBlur='checkValid("title", this, "Feature title")' /></td>
+            </tr>
+            <tr>
+            <td>Feature description</td>
+            <td><textarea rows=4 style='width:300px' id='description' name='description' onBlur='checkValid("description", this, "Feature description")'><?php echo $_POST['description']; ?></textarea></td>
+            </tr>
+            <tr>
+            <td>Feature status</td>
+            <td><select style='width:300px' id='status' name='status'>
+                <option value='Auto'>Auto Detect</option>
+                <option value='Impeded'>Impeded</option>
+            </select></td>
+            </tr>
+            <tr><td colspan='2'><br/><center>
+            <input type='submit' style='width:80px;' class='ui-state-default ui-corner-all' name='save' id='save' value='Save' title='Click here to check and save the feature.'>
+            </center><br/></td></tr>
 
-        </form>
-        </td></tr></table>
+
+            </table></td></tr>
         </table>
+        </form>
         <script language='javascript'>
         var errors = new Array();
         
@@ -411,17 +419,17 @@ class ProjectController extends BaseController
         });
         
        <?php
-        if($_POST['status']){
+        if(!empty($_POST['status'])){
             echo "$('#status').val('{$_POST['status']}');";
         }
 
-        if(is_array($errors)){
+        if(!empty($errors) && is_array($errors)){
             foreach($errors AS $key=>$error_message){
                 echo "errors['{$key}'] = '{$error_message}';";
             }
         }
         //If edit mode, put the details on the page
-        if(is_array($feature_details)){
+        if(!empty($feature_details) && is_array($feature_details)){
 
             //Go through each of the details retrieved from the database and set the elements to the values for edit
             foreach($feature_details AS $detail=>$value){
@@ -441,7 +449,7 @@ class ProjectController extends BaseController
         $content = ob_get_contents();
         ob_clean();
 
-        if(is_array($feature_details)){
+        if(!empty($feature_details) && is_array($feature_details)){
             $this->view->setTitle("Edit feature: {$feature_details['title']}");
         }else{
             $this->view->setTitle("Insert a new feature");
@@ -479,7 +487,7 @@ class ProjectController extends BaseController
                 }
             }
                 
-            if($success){
+            if(!empty($success)){
                 $_SESSION['show_message'] = 'Release saved successfully.';
                 header('location:'.$_SESSION['previous_url']);
                 exit;
@@ -512,24 +520,25 @@ class ProjectController extends BaseController
         
         <tr>
         <td>Release Title</td>
-        <td><input type='text' style='width:300px' id='title' name='title' value='<?php echo $_POST['title'] ?>' onBlur='checkValid("title", this, "Feature title")' /></td>
+        <td><input type='text' style='width:300px' id='title' name='title' value='<?php echo !empty($_POST['title']) ? $_POST['title'] : ''; ?>' onBlur='checkValid("title", this, "Feature title")' /></td>
         </tr> 
         
         <tr><td>Start Date</td><td>
-        <input id='start_date' name='start_date' style='width:300px;' value='<?php echo $_POST['start_date'] ?>' type='date' />
+        <input id='start_date' name='start_date' style='width:300px;' value='<?php echo !empty($_POST['start_date']) ? $_POST['start_date'] : '' ?>' type='date' />
         </td></tr>
         
         <tr><td>Estimated Completion Date</td><td>
-        <input id='estimated_completion_date' name='estimated_completion_date' style='width:300px;' type='date' value='<?php echo $_POST['estimated_completion_date'] ?>' />
+        <input id='estimated_completion_date' name='estimated_completion_date' style='width:300px;' type='date' value='<?php echo !empty($_POST['estimated_completion_date']) ? $_POST['estimated_completion_date'] : '' ?>' />
         </td></tr>
         
         <tr><td colspan='2'><br/><center>
         <input type='submit' style='width:80px;' class='ui-state-default ui-corner-all' name='save' id='save' value='Save' title='Click here to check and save the feature.'>
         </center><br/></td></tr>
 
-        </form>
-        </td></tr></table>
+
+        </table></td></tr>
         </table>
+        </form>
         <script language='javascript'>
         var errors = new Array();
         
@@ -544,14 +553,14 @@ class ProjectController extends BaseController
         
        <?php
         
-        if(is_array($errors)){
+        if(isset($errors) && is_array($errors)){
             foreach($errors AS $key=>$error_message){
                 echo "errors['{$key}'] = '{$error_message}';";
             }
         }
 
         //If edit mode, put the details on the page
-        if(is_array($release_details)){
+        if(!empty($release_details)){
 
             //Go through each of the details retrieved from the database and set the elements to the values for edit
             foreach($release_details AS $detail=>$value){
@@ -601,7 +610,7 @@ class ProjectController extends BaseController
                 }
             }
         
-            if($success){
+            if(!empty($success)){
                 $_SESSION['show_message'] = 'Task saved successfully.';
                 header("location:{$_SESSION['previous_url']}");
                 exit;
@@ -621,7 +630,7 @@ class ProjectController extends BaseController
 
         ob_start();
 
-        if($_SESSION['is_admin']){
+        if(!empty($_SESSION['is_admin'])){
                     echo "<button onClick=\"loadPage('index.php?Controller=Project&Action=BacklogTaskList&project_id={$_GET['project_id']}&feature_id={$_GET['feature_id']}');\" class='ui-state-default ui-corner-all' title='Click here to go back and list the tasks for this feature.'>List Tasks</button>";
         }else{
             echo "<button onClick=\"loadPage('index.php?Controller=Project&Action=TaskboardDisplay');\" class='ui-state-default ui-corner-all' title='Click here go to the taskboard'>Project Taskboard</button>";
@@ -733,10 +742,10 @@ class ProjectController extends BaseController
             }
         }
         
-        if($_POST['status']){
+        if(!empty($_POST['status'])){
             echo "$('#status').val('{$_POST['status']}');";
         }
-        if($_POST['user_email']){
+        if(!empty($_POST['user_email'])){
             echo "$('#user_email').val('{$_POST['user_email']}');";
         }
         

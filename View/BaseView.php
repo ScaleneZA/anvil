@@ -368,7 +368,7 @@ class BaseView
         $quips = $BaseModel->getQuipList();
         $id = rand(0, count($quips)-1);
         
-        return $quips[$id]['text'];
+        return isset($quips[$id]['text']) ? $quips[$id]['text'] : '';
     } 
 
 }

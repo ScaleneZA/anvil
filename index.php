@@ -1,4 +1,6 @@
 <?php
+ini_set('error_reporting', 0);
+
 require_once("Model/BaseModel.php");
 require_once("Controller/BaseController.php");
 require_once("Model/UserModel.php");
@@ -36,7 +38,7 @@ try {
     
     //echo "<pre>";print_r($_SESSION);
 
-    // a) Check if this page EXISTS	
+    // a) Check if this page EXISTS
     if(!BaseModel::pageExists($_GET['Controller'], $_GET['Action'])) {		
         throw new Exception ("The page you requested was not found.");
     // b) Check if this user has permission to view this page
@@ -57,7 +59,7 @@ try {
 
         $class = $controller.'Controller';
         $method = $action;
-        $page =& new $class();
+        $page = new $class();
         if(method_exists($class, $method)){
             $page->$method();
         }else{

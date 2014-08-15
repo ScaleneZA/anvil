@@ -31,7 +31,7 @@ if(isset($_POST['btnLogin'])){
     }else{
         $displayErrorMessage = $success['reason'];
     }
-}else if($_GET['forgotten_password']=='1' && isset($_GET['email'])){
+}else if(isset($_GET['forgotten_password']) && isset($_GET['email'])){
     if(generateForgotPasswordEmail($_GET['email'])){
         echo "<script language='javascript'>alert('An email has been sent to your account containing your password.'); window.location = 'login.php';</script>";
         exit;
@@ -39,7 +39,7 @@ if(isset($_POST['btnLogin'])){
         echo "<script language='javascript'>alert('There is something wrong with the email address you supplied.'); window.location = 'login.php';</script>";
         exit;
     }
-}else if($_GET['confirm']=='1' && isset($_GET['company_id']) && isset($_GET['key'])){
+}else if(isset($_GET['confirm']) && isset($_GET['company_id']) && isset($_GET['key'])){
     $success = $UserModel->updateCompanyStatus($_GET['company_id'], $_GET['key'], 'active');
        
     if($success){
@@ -51,7 +51,7 @@ if(isset($_POST['btnLogin'])){
     echo "<script language='javascript'>alert('Something went wrong with the registration of your company. It has been logged, and will be looked into.');  window.location = 'login.php';</script>";
     //header('location: login.php');
     exit;
-}else if($_POST['btnRegister']){
+}else if(!empty($_POST['btnRegister'])){
     if($_POST['password'] != $_POST['confirm_password']) {
         $displayErrorMessage .= "Passwords did not match.";
     }
@@ -262,7 +262,7 @@ function generateRegistrationHTML()
             <tr title='The name of your company.'>
                 <td style='text-align:left'>Company Name:</td>
             </tr><tr height=50px valign=top>
-                <td> <input style='width:300px' class='ui-corner-all' type='text' name='name' id='name' value='<?php echo $_POST['name']; ?>'></input> </td>
+                <td> <input style='width:300px' class='ui-corner-all' type='text' name='name' id='name' value='<?php echo empty($_POST['name']) ? '' : $_POST['name']; ?>'></input> </td>
             </tr>
             </tr>
     <!--     
@@ -273,19 +273,19 @@ function generateRegistrationHTML()
             <tr title="The email address of the administrator that will be managing this company's account."> 
                 <td style='text-align:left'>Admin Email:</td></tr>
             <tr height=50px valign=top>
-                <td> <input style='width:300px' class='ui-corner-all' type='text' name='email' id='email' value='<?php echo $_POST['email']; ?>'></input> </td>
+                <td> <input style='width:300px' class='ui-corner-all' type='text' name='email' id='email' value='<?php echo empty($_POST['email']) ? '' : $_POST['email']; ?>'></input> </td>
             </tr>
             <tr>
 
             <tr title="The password for the administrator that will be managing this company's account."> 
                 <td style='text-align:left'>Admin Password: </td> 
                 </tr><tr height=30px valign=top>
-                <td> <input style='width:300px' class='ui-corner-all' type='password' name='password' id='password' value='<?php echo $_POST['password']; ?>'></input> </td>
+                <td> <input style='width:300px' class='ui-corner-all' type='password' name='password' id='password' value='<?php echo empty($_POST['password']) ? '' : $_POST['password']; ?>'></input> </td>
             </tr>
             <tr title="Retype the password.">
                 <td style='text-align:left'>Confirm Admin Password:</td> 
             </tr><tr height=50px valign=top>
-                <td> <input style='width:300px' class='ui-corner-all' type='password' name='confirm_password' id='confirm_password' value='<?php echo $_POST['confirm_password']; ?>'></input> </td>
+                <td> <input style='width:300px' class='ui-corner-all' type='password' name='confirm_password' id='confirm_password' value='<?php echo empty($_POST['confirm_password']) ? '' : $_POST['confirm_password']; ?>'></input> </td>
             </tr>
             <tr>
                 <td colspan='2' id='registerButton'>

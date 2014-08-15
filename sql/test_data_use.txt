@@ -1,0 +1,366 @@
+-- phpMyAdmin SQL Dump
+-- version 3.5.2.2
+-- http://www.phpmyadmin.net
+--
+-- Host: 127.0.0.1
+-- Generation Time: Aug 15, 2014 at 04:49 PM
+-- Server version: 5.5.27
+-- PHP Version: 5.4.7
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `anvil`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `company`
+--
+
+CREATE TABLE IF NOT EXISTS `company` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(100) DEFAULT NULL,
+  `name` varchar(150) NOT NULL,
+  `company_information` text NOT NULL,
+  `status` varchar(10) NOT NULL DEFAULT 'pending',
+  `key` int(11) NOT NULL,
+  `super_team_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `super_team_id` (`super_team_id`),
+  KEY `email` (`email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `company`
+--
+
+INSERT INTO `company` (`id`, `email`, `name`, `company_information`, `status`, `key`, `super_team_id`) VALUES
+(1, 'test@test.com', 'Test Company', 'Test company for no use whatsoever', 'active', 0, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feature`
+--
+
+CREATE TABLE IF NOT EXISTS `feature` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) NOT NULL DEFAULT 'Story X',
+  `description` text NOT NULL,
+  `status` enum('Not Started','In Progress','Impeded','Done') NOT NULL DEFAULT 'Not Started',
+  `priority` int(11) NOT NULL DEFAULT '5',
+  `effort_rating` int(11) NOT NULL DEFAULT '0',
+  `project_id` int(11) NOT NULL,
+  `release_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  KEY `release_id` (`release_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `feature`
+--
+
+INSERT INTO `feature` (`id`, `title`, `description`, `status`, `priority`, `effort_rating`, `project_id`, `release_id`) VALUES
+(1, 'Test Feature', 'Test Feature', 'In Progress', 1, 0, 3, 1),
+(2, 'Test2', 'test2', '', 2, 0, 3, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `impediment`
+--
+
+CREATE TABLE IF NOT EXISTS `impediment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) NOT NULL DEFAULT 'Impediment X',
+  `description` text NOT NULL,
+  `user_email` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_email` (`user_email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `impediment`
+--
+
+INSERT INTO `impediment` (`id`, `title`, `description`, `user_email`) VALUES
+(2, 'test', 'test', 'test@test.com');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `log`
+--
+
+CREATE TABLE IF NOT EXISTS `log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `message` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=79 ;
+
+--
+-- Dumping data for table `log`
+--
+
+INSERT INTO `log` (`id`, `message`) VALUES
+(77, 'Failed to send email to: support@butternet.com\n '),
+(78, 'Failed to send email to: test@test.com\n ');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pending_email`
+--
+
+CREATE TABLE IF NOT EXISTS `pending_email` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `to` varchar(150) NOT NULL,
+  `from` varchar(150) NOT NULL,
+  `subject` text NOT NULL,
+  `body` text NOT NULL,
+  `status` enum('pending','sent','failed') NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project`
+--
+
+CREATE TABLE IF NOT EXISTS `project` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) NOT NULL DEFAULT 'Project X',
+  `description` text NOT NULL,
+  `status` enum('Not Started','In Progress','Impeded','Done') NOT NULL DEFAULT 'Not Started',
+  `company_id` int(11) NOT NULL,
+  `start_date` date NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `company_id` (`company_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `project`
+--
+
+INSERT INTO `project` (`id`, `title`, `description`, `status`, `company_id`, `start_date`) VALUES
+(1, 'Project X', 'Test project', 'Not Started', 1, '2014-08-01'),
+(2, 'Project Y', 'Test project', 'Not Started', 1, '2014-08-01'),
+(3, 'Another test project', 'test', 'Not Started', 1, '2014-08-14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quip`
+--
+
+CREATE TABLE IF NOT EXISTS `quip` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `text` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `release`
+--
+
+CREATE TABLE IF NOT EXISTS `release` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) NOT NULL,
+  `start_date` date NOT NULL,
+  `estimated_completion_date` date NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `task_time_stamp` datetime DEFAULT NULL,
+  `archived` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `release`
+--
+
+INSERT INTO `release` (`id`, `title`, `start_date`, `estimated_completion_date`, `project_id`, `task_time_stamp`, `archived`) VALUES
+(1, 'Test Release1', '2014-08-15', '2014-08-31', 3, '2014-08-15 16:47:02', 0),
+(2, 'test archive release', '2014-08-01', '2014-08-02', 3, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task`
+--
+
+CREATE TABLE IF NOT EXISTS `task` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) NOT NULL DEFAULT 'Task X',
+  `description` text NOT NULL,
+  `status` enum('Not Started','In Progress','Impeded','Done') NOT NULL DEFAULT 'Not Started',
+  `priority` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  `user_email` varchar(100) DEFAULT NULL,
+  `added_by` varchar(100) DEFAULT NULL,
+  `time_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `estimated_hours` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `feature_id` (`feature_id`),
+  KEY `user_email` (`user_email`),
+  KEY `added_by` (`added_by`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `task`
+--
+
+INSERT INTO `task` (`id`, `title`, `description`, `status`, `priority`, `feature_id`, `user_email`, `added_by`, `time_stamp`, `estimated_hours`) VALUES
+(1, 'Test Task', 'Test Task', 'Not Started', 2, 1, 'test@test.com', 'test@test.com', '2014-08-15 14:39:25', 0),
+(2, 'Test Task two', 'test', 'In Progress', 1, 1, NULL, 'test@test.com', '2014-08-15 14:47:02', 0),
+(3, 'Test Task 3', 'Test', 'Not Started', 3, 1, NULL, 'test@test.com', '2014-08-15 14:37:58', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `task_user_hours_done`
+--
+
+CREATE TABLE IF NOT EXISTS `task_user_hours_done` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hours` int(11) NOT NULL DEFAULT '0',
+  `date` date NOT NULL,
+  `user_email` varchar(100) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_email` (`user_email`,`task_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `team`
+--
+
+CREATE TABLE IF NOT EXISTS `team` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `description` text,
+  `company_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `company_id` (`company_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `team`
+--
+
+INSERT INTO `team` (`id`, `name`, `description`, `company_id`) VALUES
+(1, 'Test Team', 'Testing team, don''t use', 1),
+(2, 'tset team 2', 'test', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `team_project`
+--
+
+CREATE TABLE IF NOT EXISTS `team_project` (
+  `team_id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  PRIMARY KEY (`team_id`,`project_id`),
+  KEY `project_id` (`project_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `team_project`
+--
+
+INSERT INTO `team_project` (`team_id`, `project_id`) VALUES
+(2, 1),
+(2, 2),
+(1, 3),
+(2, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `theme`
+--
+
+CREATE TABLE IF NOT EXISTS `theme` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+
+--
+-- Dumping data for table `theme`
+--
+
+INSERT INTO `theme` (`id`, `name`, `description`) VALUES
+(1, 'brown', 'The default brown theme. Developer''s choice.'),
+(2, 'black', 'Black theme. For the darker side of Anvil.\r\nUi-Darkness (JQuery UI Themeroller)'),
+(5, 'mint-choc', 'mint-choc from JQuery UI'),
+(6, 'brown', 'The default brown theme. Developer''s choice.'),
+(7, 'black', 'Black theme. For the darker side of Anvil.\r\nUi-Darkness (JQuery UI Themeroller)'),
+(8, 'mint-choc', 'mint-choc from JQuery UI');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `email` varchar(100) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `display_name` varchar(50) NOT NULL,
+  `is_admin` binary(1) NOT NULL DEFAULT '0',
+  `company_id` int(11) NOT NULL,
+  `team_id` int(11) DEFAULT NULL,
+  `theme_id` int(11) NOT NULL DEFAULT '1',
+  `active` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`email`),
+  KEY `company_id` (`company_id`),
+  KEY `team_id` (`team_id`),
+  KEY `theme_id` (`theme_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`email`, `password`, `display_name`, `is_admin`, `company_id`, `team_id`, `theme_id`, `active`) VALUES
+('test@test.com', 'test', 'Test User', '1', 1, 1, 1, 1),
+('test@testtest.com', 'testtesttest', 'test user 2', '0', 1, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_preference`
+--
+
+CREATE TABLE IF NOT EXISTS `user_preference` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `controller` varchar(50) NOT NULL,
+  `action` varchar(50) NOT NULL,
+  `key` varchar(50) NOT NULL,
+  `value` varchar(50) NOT NULL,
+  `user_email` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_email`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -277,12 +277,12 @@ class UserController extends BaseController
         <tr><td><table class='mainEditGrid' style='width:90%;'>
         <tr>
         <td>Email</td>
-        <td><input type='text' style='width:300px' id='email' name='email' value='<?php echo $_POST['email']; ?>' onBlur='checkValid("email", this, "User email")' />
-        <input type='hidden' style='width:300px' id='email_hidden' value='<?php echo $_POST['email_hidden']; ?>' name='email_hidden' /></td>
+        <td><input type='text' style='width:300px' id='email' name='email' value='<?php echo !empty($_POST['email']) ? $_POST['email'] : ''; ?>' onBlur='checkValid("email", this, "User email")' />
+        <input type='hidden' style='width:300px' id='email_hidden' value='<?php echo !empty($_POST['email_hidden']) ? $_POST['email_hidden'] : ''; ?>' name='email_hidden' /></td>
         </tr> 
         <tr>
         <td>Display Name</td>
-        <td><input type='text' style='width:300px' id='display_name' value='<?php echo $_POST['display_name']; ?>' name='display_name' onBlur='checkValid("minimum_text", this, "Display name")' /></td>
+        <td><input type='text' style='width:300px' id='display_name' value='<?php echo !empty($_POST['display_name']) ? $_POST['display_name'] : ''; ?>' name='display_name' onBlur='checkValid("minimum_text", this, "Display name")' /></td>
         </tr>
         <tr>
         <?php

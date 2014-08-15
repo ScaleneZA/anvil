@@ -429,7 +429,7 @@ class UserModel extends BaseModel
     /**
      * Check that a user has permission to view a page
      */
-    function userHasPermission($user_email, $controller, $action, $get_params=null, $company_id, $team_id)
+    public static function userHasPermission($user_email, $controller, $action, $get_params=null, $company_id, $team_id)
     {
         //echo "email{$user_email}";
         //echo "controller{$controller}";
@@ -442,6 +442,7 @@ class UserModel extends BaseModel
             $team_id = 'SUPER';
         }
 
+        $check = array();
         if(is_array($get_params)){
             foreach($get_params AS $key=>$value){
                 if(strtoupper($value) == 'NULL' || $value == '' || !$value) continue;
@@ -468,7 +469,7 @@ class UserModel extends BaseModel
             }
         }
         
-        if(is_array($check)){
+        if(empty($check) == false){
             $UserModel = new UserModel();
             $success = $UserModel->checkURLHack($check, $company_id, $team_id);
             if(!$success){

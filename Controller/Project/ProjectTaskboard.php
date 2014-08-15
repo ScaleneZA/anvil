@@ -28,7 +28,7 @@ class ProjectTaskboard extends BaseController
         }
     
         //Handle GET Params
-        if ($_GET['project_id']){
+        if (!empty($_GET['project_id'])){
             $selected_project_id = $_GET['project_id'];
             $this->ProjectModel->saveUserPreference($_GET['Controller'], $_GET['Action'], 'project_id', $selected_project_id, $_SESSION['user_email']);
         }else if (isset($_SESSION['preferences'][$_GET['Controller']][$_GET['Action']]['project_id'])){
@@ -38,12 +38,12 @@ class ProjectTaskboard extends BaseController
             $selected_project_id = $this->getCurrentProjectId();
         }
         
-        if ($_GET['release_id']){
-            $selected_release_id = $_GET['release_id'];
+        if (!empty($_GET['release_id'])){
+            $selected_release_id = empty($_GET['release_id']) ? '0' : $_GET['release_id'];
             $this->ProjectModel->saveUserPreference($_GET['Controller'], $_GET['Action'], 'release_id', $selected_release_id, $_SESSION['user_email']);
         }else if (isset($_SESSION['preferences'][$_GET['Controller']][$_GET['Action']]['release_id'])){
             //print_r($_SESSION);exit;
-            $selected_release_id = $_SESSION['preferences'][$_GET['Controller']][$_GET['Action']]['release_id'];
+            $selected_release_id = empty($_SESSION['preferences'][$_GET['Controller']][$_GET['Action']]['release_id']) ? '0' : $_SESSION['preferences'][$_GET['Controller']][$_GET['Action']]['release_id'];
         }else{
             $selected_release_id = self::getCurrentReleaseId($selected_project_id);
         }
@@ -955,7 +955,7 @@ class ProjectTaskboard extends BaseController
                 
                 <?php
                 $force_init = 1;
-                if(is_array($_SESSION['preferences']['Project']['TaskboardDisplay'])){
+                if(!empty($_SESSION['preferences']['Project']['TaskboardDisplay']) && is_array($_SESSION['preferences']['Project']['TaskboardDisplay'])){
                     foreach($_SESSION['preferences']['Project']['TaskboardDisplay'] AS $feature_id=>$value){
                         if(substr($feature_id, 0, 8) != 'feature_' || $value != 'hidden'){
                             continue;
@@ -1034,7 +1034,7 @@ class ProjectTaskboard extends BaseController
         </div>
 
         <?php
-        if(!$_GET['show_impediments']){
+        if(empty($_GET['show_impediments'])){
             echo "
             <script language='javascript'>
             $('#impedimentsBox').hide();
