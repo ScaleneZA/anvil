@@ -1,0 +1,149 @@
+BODY 
+{
+background: #111111;
+/*background-image: url('../img/background2.png');*/
+font-size: 13;
+}
+
+HR
+{
+	border-width: 0px;
+	border-top: 1px solid #555555;
+}
+
+textarea {
+    resize: none;
+}
+
+.box{
+padding:10px;
+color:#CCCCCC
+font-family: Verdana, Arial, Tahoma, Serif;
+font-size: 13;
+}
+
+.title{
+height:20px; 
+width:280px; 
+border-color:#333333; 
+border-style:solid; 
+padding:5px; 
+text-align:center
+}
+
+INPUT {
+font-size: 11;
+}
+
+
+.drag{
+height:60px;
+width:162px;
+font-size: 8pt;
+font-weight:normal;
+padding:3px;
+cursor:move;
+position:absolute;
+}
+
+.drag-feature{
+height:60px;
+width:272px;
+font-size: 8pt;
+font-weight:normal;
+padding:3px;
+cursor:move;
+position:absolute;
+}
+
+.mainGrid{
+border-color:#555555;
+width:98%; 
+padding:20px;
+margin-right:auto; 
+margin-left:auto;
+background-color:#BBBBBB;
+border-collapse: seperate;
+font-size: 13;
+}
+.mainGrid tbody tr:hover td
+{
+	background:#ABABAB;
+}
+.mainGrid th
+{
+background-color:#999999;
+border-color:#666666;
+border-style:solid; 
+border-width:1px;
+}
+.mainGrid td
+{
+border-color:#666666; /*grey*/
+border-style:solid; 
+border-width:1px;
+}
+
+.taskboardGrid{
+border-color:#201913;
+width:98%; 
+padding:20px;
+margin-right:auto; 
+margin-left:auto;
+background-color:#BBBBBB;
+border-collapse: seperate;
+font-size: 13;
+}
+.taskboardGrid tbody tr:hover td
+{
+	background:#CCCCCC;
+}
+.taskboardGrid th
+{
+background-color:#AAAAAA;
+border-color:#999999;
+border-style:solid; 
+border-width:1px;
+}
+.taskboardGrid td
+{
+border-color:#999999;
+border-style:solid; 
+border-width:1px;
+}
+
+.mainEditGrid{
+border:0; 
+padding:5px;
+margin-right:auto; 
+margin-left:auto;
+background-color:#BBBBBB;
+border-collapse: collapse;
+font-size: 13;
+}
+.mainEditGrid th
+{
+	background-color:#999999;
+}
+
+div.autosize { display: table; width: 1px; }
+div.autosize > div { display: table-cell; }
+
+.tooltip {
+	display:none;
+	background:transparent url(../../../img/tooltip/white_arrow.png);
+	font-size:12px;
+	height:70px;
+	width:160px;
+	padding:25px;
+	color:#000;	
+}
+.tooltip2 {
+	display:none;
+	background:transparent url(../../../img/tooltip/white_arrow_big.png);
+	font-size:12px;
+	height:150px;
+	width:320px;
+	padding:25px;
+	color:#000;	
+}

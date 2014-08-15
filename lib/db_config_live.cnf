@@ -1,0 +1,4 @@
+#config file for connection to DB
+db:butterne_anvil
+username:butterne_dev
+password:solomon

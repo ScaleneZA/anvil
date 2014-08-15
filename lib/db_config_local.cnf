@@ -1,0 +1,4 @@
+#config file for connection to DB
+db:anvil
+username:root
+password:pass
